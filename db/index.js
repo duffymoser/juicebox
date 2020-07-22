@@ -3,11 +3,6 @@ const { Client } = require('pg'); // imports the pg module
 // supply the db name and location of the database
 const client = new Client('postgres://localhost:5432/juicebox-dev');
 
-// it appears I have this in here twice
-//module.exports = {
-//  client,
-//}
-
 async function getAllUsers() {
     const { rows } = await client.query(
       `SELECT id, username 
@@ -26,11 +21,11 @@ async function getAllUsers() {
 
   async function createUser({ username, password }) {
     try {
-      const rows = await client.query(`
+      const { rows } = await client.query(`
       INSERT INTO users(username, password)
-      VALUES ($1, $2);
+      VALUES ($1, $2)
       ON CONFLICT (username) DO NOTHING 
-      Returning *
+      RETURNING *;
       `, [username, password]);
   
       return rows;
