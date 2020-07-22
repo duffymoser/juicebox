@@ -9,9 +9,9 @@ async function createInitialUsers() {
   try {
     console.log("Starting to create users...");
 
-    const albert = await createUser({ username: 'albert', password: 'bertie99' });
-    await createUser({ username: 'sandra', password: '2sandy4me' });
-    await createUser({ username: 'glamgal', password: 'soglam' });
+    await createUser({ username: 'albert', password: 'bertie99', name: 'bertiename', location: 'bertielocation' });
+    await createUser({ username: 'sandra', password: '2sandy4me', name: 'sandyname', location: 'sandylocation'  });
+    await createUser({ username: 'glamgal', password: 'soglam', name: 'glamname', location: 'glamlocation'  });
    
     console.log("Finished creating users!");
   } catch(error) {
@@ -57,7 +57,10 @@ async function rebuildDB() {
         CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         username varchar(255) UNIQUE NOT NULL,
-        password varchar(255) NOT NULL
+        password varchar(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        location VARCHAR(255),
+        active BOOLEAN DEFAULT true
       );
       `);
 
