@@ -2,7 +2,8 @@
 const {
     client,
     getAllUsers,
-    createUser  // new
+    createUser,
+    updateUser // new
   } = require('./index');
 
 async function createInitialUsers() {
@@ -12,7 +13,7 @@ async function createInitialUsers() {
     await createUser({ username: 'albert', password: 'bertie99', name: 'bertiename', location: 'bertielocation' });
     await createUser({ username: 'sandra', password: '2sandy4me', name: 'sandyname', location: 'sandylocation'  });
     await createUser({ username: 'glamgal', password: 'soglam', name: 'glamname', location: 'glamlocation'  });
-   
+    await createUser({ username: 'Number4', password: 'password4', name: 'name4', location: 'location4'  });
     console.log("Finished creating users!");
   } catch(error) {
     console.error("Error creating users!");
@@ -38,6 +39,7 @@ async function rebuildDB() {
     try {
         console.log("Starting to drop tables...");
       await client.query(`
+        DROP TABLE if EXISTS posts;
         DROP TABLE IF EXISTS users;
       `);
 
@@ -62,6 +64,13 @@ async function rebuildDB() {
         location VARCHAR(255),
         active BOOLEAN DEFAULT true
       );
+      CREATE TABLE posts (
+        id SERIAL PRIMARY KEY,
+        "authorId" INTEGER REFERENCES users(id) NOT NULL,
+        title varchar(255) NOT NULL,
+        content TEXT NOT NULL,
+        active BOOLEAN DEFAULT true
+      );
       `);
 
       console.log("Finished building tables!");
@@ -79,8 +88,20 @@ async function rebuildDB() {
     try {
       console.log("Starting to test database...");
   
+      console.log("Calling getAllUsers")
       const users = await getAllUsers();
-      console.log("getAllUsers:", users);
+      console.log("85 Result:", users);
+
+      //added to test updateUser
+      // const newSandra = await updateUser( 2, { name: 'newname2' });
+      // console.log(newSandra);
+  
+      console.log("Calling updateUser on users[0]")
+      const updateUserResult = await updateUser(users[0].id, {
+        name: "Newname Sogood",
+        location: "Lesterville, KY"
+      });
+      console.log("96 Result:", updateUserResult);
   
       console.log("Finished database tests!");
     } catch (error) {
@@ -88,7 +109,7 @@ async function rebuildDB() {
       throw error;
     }
   }
-
+;
   rebuildDB()
   .then(testDB)
   .catch(console.error)
