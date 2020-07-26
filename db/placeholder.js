@@ -17,7 +17,18 @@ async function getAllUsers() {
 }
 
   
-  
+  // and export them
+  module.exports = {
+    client,
+    getAllUsers,
+    createUser,
+    updateUser,
+    createPost,
+    updatePost,
+    getAllPosts,
+    getPostsByUser,
+    getUserById,
+  }
 
   async function createUser({ 
     username, 
@@ -119,14 +130,10 @@ async function getAllUsers() {
     return rows;
   }
 
-
-  //straight copy - can't see where mine is wrong
-  
   async function getPostsByUser(userId) {
     try {
-      const { rows } = await client.query(`
-        SELECT * 
-        FROM posts
+      const { rows } = client.query(`
+        SELECT * FROM posts
         WHERE "authorId"=${ userId };
       `);
   
@@ -154,17 +161,3 @@ async function getAllUsers() {
     }
   } 
   
-
-  //moved exports to the bottom
-  // and export them
-  module.exports = {
-    client,
-    getAllUsers,
-    createUser,
-    updateUser,
-    createPost,
-    updatePost,
-    getAllPosts,
-    getPostsByUser,
-    getUserById,
-  }
