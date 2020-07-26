@@ -22,6 +22,7 @@ async function getAllUsers() {
     updatePost,
     getAllPosts,
     getPostsByUser,
+    getUserById,
   }
 
   async function createUser({ 
@@ -79,9 +80,8 @@ async function getAllUsers() {
       const { rows: [post] } = await client.query(`
       INSERT INTO posts("authorId", title, content)
       VALUES ($1, $2, $3)
-      ON CONFLICT ("authorId") DO NOTHING 
       RETURNING *;
-      `, ["authorId", title, content]);
+      `, [authorId, title, content]);
   
       return post;
     } catch (error) {
@@ -89,12 +89,7 @@ async function getAllUsers() {
     }
   }
 
-  async function updatePost(id, {
-
-      title,
-      content,
-      active
-  }) {
+  async function updatePost(id, fields = {}) {
     // build the set string
     const setString = Object.keys(fields).map(
       (key, index) => `"${ key }"=$${ index + 1 }`
@@ -111,8 +106,7 @@ async function getAllUsers() {
         SET ${ setString }
         WHERE id=${ id }
         RETURNING *;
-      `, 
-         Object.values(fields));
+      `, Object.values(fields));
   
       return post;
     } catch (error) {
@@ -143,4 +137,21 @@ async function getAllUsers() {
       throw error;
     }
   }
+
+  async function getUserById(userId) {
+    try {
+      const { rows: [user]} = await client.query(`
+        SELECT * FROM users
+        WHERE id=${ userId };
+      `);
+      if (!updateUser) {
+        return null;
+      }else{
+        user.posts = await getPostsByUser(userId);
+        return user;
+      }
+      } catch (error) {
+      throw error;
+    }
+  } 
   
