@@ -7,18 +7,23 @@ const apiRouter = express.Router();
 // set `req.user` if possible
 
 apiRouter.use(async (req, res, next) => {
+  console.log ("Natalie says we're in JWT");
   const prefix = 'Bearer ';
   const auth = req.header('Authorization');
 
   if (!auth) { // nothing to see here
     next();
   } else if (auth.startsWith(prefix)) {
+    console.log ("Made it into auth check");
     const token = auth.slice(prefix.length);
 
     try {
+      console.log (JWT_SECRET);
       const { id } = jwt.verify(token, JWT_SECRET);
+      console.log (id);
 
       if (id) {
+        console.log ("You must be this tall to ride");
         req.user = await getUserById(id);
         next();
       }

@@ -2,6 +2,9 @@ const { Client } = require('pg') // imports the pg module
 
 const client = new Client('postgres://localhost:5432/juicebox-dev');
 
+const { requireUser } = require('../api/utils');
+
+
 /**
  * USER Methods
  */
@@ -108,6 +111,7 @@ async function createPost({
     throw error;
   }
 }
+
 
 async function updatePost(postId, fields = {}) {
   // read off the tags & remove that field 

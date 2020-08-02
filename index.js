@@ -16,9 +16,7 @@ server.use(morgan('dev'));
 const { client } = require('./db');
 client.connect();
 
-server.listen(PORT, () => {
-  console.log('The server is up on port', PORT)
-});
+
 
 const apiRouter = require('./api');
 server.use('/api', apiRouter);
@@ -30,4 +28,8 @@ server.use((req, res, next) => {
     console.log("<_____Body Logger END_____>");
   
     next();
+  });
+
+  server.listen(PORT, () => {
+    console.log('The server is up on port', PORT)
   });
